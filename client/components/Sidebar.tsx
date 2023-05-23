@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
   LogoIcon,
   ShowHideIcon,
@@ -18,6 +19,7 @@ type SidebarProps = {
 };
 
 export const Sidebar = ({ width }: SidebarProps) => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   function toggleSidebar() {
@@ -25,7 +27,7 @@ export const Sidebar = ({ width }: SidebarProps) => {
   }
 
   return (
-    <div className={`fixed left-0 top-0 flex h-full w-[${width}px] border-r-2 border-neutral-200`}>
+    <div style={{ width }} className="fixed left-0 top-0 flex h-full border-r-2 border-neutral-200">
       <div className="flex w-full flex-col justify-between px-4 pb-7 pt-1">
         {/* TOP */}
         <div>
@@ -43,20 +45,19 @@ export const Sidebar = ({ width }: SidebarProps) => {
 
           {/* NAVIGATION */}
           <div className="space-y-1">
-            <Button icon={<DashboardIcon />} href="/dashboard" text="Dashbaord" />
-            <Button icon={<ListIcon />} href="/accounts" text="Accounts" />
-            <Button
-              icon={<TrendingUpIcon />}
-              href="/investments"
-              text="Investments"
-              selected={true}
-            />
+            {[
+              { icon: <DashboardIcon />, href: '/dashboard', text: 'Dashboard' },
+              { icon: <ListIcon />, href: '/accounts', text: 'Accounts' },
+              { icon: <TrendingUpIcon />, href: '/investments', text: 'Investments' },
+            ].map(({ icon, href, text }) => (
+              <Button key={href} icon={icon} href={href} text={text} selected={pathname === href} />
+            ))}
           </div>
 
           <hr className="my-2.5 border-neutral-100" />
 
           {/* ADD PAGE */}
-          <button className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2 font-semibold hover:bg-neutral-100">
+          <button className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2 text-base font-semibold hover:bg-neutral-100">
             Add page
             <PlusIcon />
           </button>
@@ -74,10 +75,10 @@ export const Sidebar = ({ width }: SidebarProps) => {
                 className="rounded-full"
               />
             }
-            href="/settings"
+            href="/"
             text="Settings"
           />
-          <Button icon={<LogOutIcon />} href="/logout" text="Log out" />
+          <Button icon={<LogOutIcon />} href="/" text="Log out" />
         </div>
       </div>
     </div>
@@ -102,7 +103,7 @@ function Button({ icon, href, text, selected }: ButtonProps) {
       }`}
     >
       {icon}
-      <span>{text}</span>
+      <span className="text-lg font-medium">{text}</span>
     </Link>
   );
 }

@@ -21,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${poppins.className} flex h-screen bg-neutral-50`}>
         <Sidebar width={SIDEBAR_WIDTH} />
-        <div className={`ml-[${SIDEBAR_WIDTH}px] p-4`}>{children}</div>
+        <div style={{ marginLeft: SIDEBAR_WIDTH }} className="p-4">
+          {children}
+        </div>
       </body>
     </html>
   );
