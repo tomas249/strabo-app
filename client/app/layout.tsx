@@ -1,6 +1,7 @@
 import './globals.css';
 import { Poppins } from 'next/font/google';
 import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -21,7 +22,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${poppins.className} flex h-screen bg-neutral-50`}>
         <Sidebar width={SIDEBAR_WIDTH} />
-        <div style={{ marginLeft: SIDEBAR_WIDTH }} className="p-4">
+        <div style={{ marginLeft: SIDEBAR_WIDTH }} className="w-full overflow-auto px-8">
+          <Navbar />
           {children}
         </div>
       </body>

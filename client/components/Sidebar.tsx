@@ -18,7 +18,7 @@ type SidebarProps = {
   width: number;
 };
 
-export const Sidebar = ({ width }: SidebarProps) => {
+export default function SideBar({ width }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,7 +27,10 @@ export const Sidebar = ({ width }: SidebarProps) => {
   }
 
   return (
-    <div style={{ width }} className="fixed left-0 top-0 flex h-full border-r-2 border-neutral-200">
+    <div
+      style={{ width }}
+      className="fixed left-0 top-0 flex h-full border-r-2 border-neutral-200 bg-neutral-50"
+    >
       <div className="flex w-full flex-col justify-between px-4 pb-7 pt-1">
         {/* TOP */}
         <div>
@@ -83,9 +86,7 @@ export const Sidebar = ({ width }: SidebarProps) => {
       </div>
     </div>
   );
-};
-
-export default Sidebar;
+}
 
 type ButtonProps = {
   icon: React.ReactNode;
