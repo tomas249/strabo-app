@@ -1,10 +1,10 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       backgroundImage: {
@@ -12,8 +12,9 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-    },
-    theme: {
+      fontFamily: {
+        poppins: ['--font-poppins', 'sans-serif'],
+      },
       colors: {
         white: '#ffffff',
         black: '#000000',
@@ -78,7 +79,10 @@ module.exports = {
           900: '#310D0B',
         }
       }
-    }
+    },
+  },
+  variants: {
+    extend: {},
   },
   plugins: [],
 }
