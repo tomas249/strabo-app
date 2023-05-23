@@ -9,9 +9,15 @@ import {
   DashboardIcon,
   ListIcon,
   TrendingUpIcon,
+  LogOutIcon,
+  PlusIcon,
 } from '@/components/Icons';
 
-export const Sidebar = () => {
+type SidebarProps = {
+  width: number;
+};
+
+export const Sidebar = ({ width }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   function toggleSidebar() {
@@ -19,48 +25,59 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="fixed left-0 top-0 flex h-full w-[274px] border-r-2 border-[#D3D3E0]">
-      <div className="flex w-full flex-col justify-between px-4 pb-4 pt-1">
+    <div className={`fixed left-0 top-0 flex h-full w-[${width}px] border-r-2 border-neutral-200`}>
+      <div className="flex w-full flex-col justify-between px-4 pb-7 pt-1">
+        {/* TOP */}
         <div>
-          <div className="flex justify-between py-3">
+          {/* LOGO */}
+          <div className="flex justify-between py-6">
             <div className="ml-2 flex items-center space-x-3">
               <Link href="/">
                 <LogoIcon />
               </Link>
             </div>
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-neutral-300 hover:bg-[#EBEBF3] hover:text-purple-500">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-neutral-300 hover:bg-neutral-100 hover:text-purple-500">
               <ShowHideIcon />
             </button>
           </div>
 
+          {/* NAVIGATION */}
           <div className="space-y-1">
-            <Link href="/" className="flex h-11 w-full rounded-xl px-4 py-2 text-left">
-              <DashboardIcon />
-              Dashboard
-            </Link>
-            <button className="h-11 w-full rounded-xl px-4 py-2 text-left hover:bg-[#bcb5fa]">
-              Dashboard
-            </button>
-            <button className="h-11 w-full rounded-xl px-4 py-2 text-left hover:bg-[#bcb5fa]">
-              Dashboard
-            </button>
-            <button className="h-11 w-full rounded-xl bg-[#ECEAFF] px-4 py-2 text-left text-[#5547F6] hover:bg-[#bcb5fa]">
-              Dashboard
-            </button>
+            <Button icon={<DashboardIcon />} href="/dashboard" text="Dashbaord" />
+            <Button icon={<ListIcon />} href="/accounts" text="Accounts" />
+            <Button
+              icon={<TrendingUpIcon />}
+              href="/investments"
+              text="Investments"
+              selected={true}
+            />
           </div>
-          <hr className="my-[10px]" />
-          <button className="h-10 w-full rounded-xl bg-white px-4 py-2 font-semibold hover:bg-[#EBEBF3]">
-            Add page +
+
+          <hr className="my-2.5 border-neutral-100" />
+
+          {/* ADD PAGE */}
+          <button className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2 font-semibold hover:bg-neutral-100">
+            Add page
+            <PlusIcon />
           </button>
         </div>
 
+        {/* BOTTOM */}
         <div className="space-y-1">
-          <button className="h-10 w-full rounded-xl bg-white px-4 py-2 font-semibold hover:bg-[#EBEBF3]">
-            Add page +
-          </button>
-          <button className="h-10 w-full rounded-xl bg-white px-4 py-2 font-semibold hover:bg-[#EBEBF3]">
-            Add page +
-          </button>
+          <Button
+            icon={
+              <Image
+                src="/avatar.png"
+                alt="avatar"
+                width={24}
+                height={24}
+                className="rounded-full"
+              />
+            }
+            href="/settings"
+            text="Settings"
+          />
+          <Button icon={<LogOutIcon />} href="/logout" text="Log out" />
         </div>
       </div>
     </div>
@@ -68,3 +85,24 @@ export const Sidebar = () => {
 };
 
 export default Sidebar;
+
+type ButtonProps = {
+  icon: React.ReactNode;
+  href: string;
+  text: string;
+  selected?: boolean;
+};
+
+function Button({ icon, href, text, selected }: ButtonProps) {
+  return (
+    <Link
+      href={href}
+      className={`flex h-11 w-full items-center space-x-3 rounded-xl px-4 py-2 ${
+        selected ? 'bg-primary-100 text-primary-500' : 'text-neutral-700 hover:bg-primary-100'
+      }`}
+    >
+      {icon}
+      <span>{text}</span>
+    </Link>
+  );
+}
