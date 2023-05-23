@@ -210,3 +210,15 @@ export const SyncingIcon = () => (
     />
   </svg>
 );
+
+export const TickIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M14.4 4.9502L6.97498 13.0502L3.59998 9.36838"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

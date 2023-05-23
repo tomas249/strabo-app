@@ -1,10 +1,10 @@
 'use client';
 
-import { MutableRefObject, RefObject, forwardRef, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { DropdownIcon, SyncingIcon } from '@/components/Icons';
-import { useOutside } from '@/hooks/useOutside';
+import { DropdownIcon, SyncingIcon, TickIcon } from '@/components/Icons';
 import Image from 'next/image';
+import React from 'react';
 
 const PATHS = {
   dashboard: 'Dashboard',
@@ -13,15 +13,19 @@ const PATHS = {
 };
 
 const CURRENCY_OPTIONS = [
-  { value: 'gbp', label: 'GBP', icon: '/countries/country-GB.svg' },
-  { value: 'usd', label: 'USD', icon: '/countries/country-US.svg' },
-  { value: 'eur', label: 'EUR', icon: '/countries/country-EU.svg' },
+  { value: 'GBP', label: 'GBP', icon: '/countries/country-GB.svg' },
+  { value: 'USD', label: 'USD', icon: '/countries/country-US.svg' },
+  { value: 'EUR', label: 'EUR', icon: '/countries/country-EU.svg' },
 ];
 
-const example = CURRENCY_OPTIONS[0];
+const CURRENCY_OPTIONS_OBJ = CURRENCY_OPTIONS.reduce((acc, current) => {
+  acc[current.value] = current;
+  return acc;
+}, {} as Record<string, SelectOption & { icon: string }>);
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [currency, setCurrency] = useState<SelectOption | undefined>(CURRENCY_OPTIONS[0]);
 
   const title = getFirstPath(pathname, PATHS);
 
@@ -29,10 +33,15 @@ export default function Navbar() {
     <div className="sticky top-0 flex h-20 items-center justify-between border-b-2 border-neutral-200 bg-neutral-50">
       <h1 className="text-2xl font-semibold">{title}</h1>
       <div className="flex space-x-2">
-        <OverlayWrapper>
-          <SelectButton icon={example.icon} label={example.label} />
-        </OverlayWrapper>
-        <button className="rounded-lg bg-white p-2.5 hover:bg-neutral-200">
+        <Select
+          options={CURRENCY_OPTIONS}
+          value={currency}
+          onChange={(value) => {
+            console.log({ value });
+            setCurrency(value);
+          }}
+        />
+        <button className="rounded-lg bg-white p-2.5 hover:bg-neutral-100">
           <SyncingIcon />
         </button>
       </div>
@@ -54,52 +63,86 @@ type SelectButtonProps = {
 };
 
 const SelectButton = ({ icon, label }: SelectButtonProps) => {
-  return (onClick: () => void) => (
-    <button
-      className="flex items-center rounded-lg bg-white px-2.5 py-[8.5px] hover:bg-neutral-100"
-      onClick={onClick}
-    >
-      {/* {icon} */}
+  return (
+    <div className="flex cursor-pointer items-center rounded-lg bg-white px-2.5 py-[8.5px] hover:bg-neutral-100">
       <Image src={icon} height="24" width="24" alt="Country" />
-      <span className="mx-2.5 font-semibold">{label}</span>
+      <span className="mx-2.5 font-semibold leading-tight">{label}</span>
       <DropdownIcon />
-    </button>
+    </div>
   );
 };
 
-type OverlayOptionsProps = {
-  options: {
-    label: string;
-    value: string;
-    icon: string;
-  }[];
-  onSelect: (value: string) => void;
+type SelectOption = {
+  value: string;
+  label: string;
 };
-const OverlayOptions = forwardRef<HTMLDivElement | null, { open: boolean }>(({ open }, ref) => {
-  if (!open) return null;
+
+type SelectProps = {
+  options: SelectOption[];
+  value?: SelectOption;
+  onChange: (value: SelectOption | undefined) => void;
+};
+
+export function Select({ value, onChange, options }: SelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function clearOptions() {
+    onChange(undefined);
+  }
+
+  function selectOption(option: SelectOption) {
+    if (option !== value) {
+      onChange(option);
+    }
+  }
+
+  function isOptionSelected(option: SelectOption) {
+    return option === value;
+  }
 
   return (
     <div
-      ref={ref}
-      className="absolute left-0 flex w-full flex-col rounded-lg border-2 border-neutral-500 bg-white p-2"
+      onBlur={() => setIsOpen(false)}
+      onClick={() => setIsOpen((prev) => !prev)}
+      className="relative"
     >
-      <div className="hover:bg-neutral-200">option 1</div>
-      <div className="hover:bg-neutral-200">option 1</div>
-      <div className="hover:bg-neutral-200">option 1</div>
+      <SelectButton
+        icon={CURRENCY_OPTIONS_OBJ[value?.value || ''].icon}
+        label={value?.label || 'none'}
+      />
+      <ul
+        style={{
+          display: isOpen ? 'block' : 'none',
+        }}
+        className="absolute right-0 top-[calc(100%+4px)] z-10 w-36 overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
+      >
+        {options.map((option) => (
+          <li
+            key={option.value}
+            className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100"
+            onClick={(e) => {
+              e.stopPropagation();
+              selectOption(option);
+              setIsOpen(false);
+            }}
+          >
+            <div className="flex items-center space-x-2 pl-1">
+              <Image
+                src={CURRENCY_OPTIONS_OBJ[option.value].icon}
+                height="18"
+                width="18"
+                alt="Country"
+              />
+              <span className="text-sm font-medium">{option.label}</span>
+            </div>
+            {isOptionSelected(option) && (
+              <div className="text-primary-500">
+                <TickIcon />
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
-});
-
-const OverlayWrapper = ({ children }: { children: (cb: () => void) => React.ReactNode }) => {
-  const [open, setOpen] = useState(false);
-  const wrapperRef = useRef(null);
-
-  useOutside(wrapperRef, () => setOpen(false));
-
-  return (
-    <div className="relative">
-      {children(() => setOpen(true))}
-      <OverlayOptions open={open} ref={wrapperRef} />
-    </div>
-  );
-};
+}
