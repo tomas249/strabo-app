@@ -3,18 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { SyncingIcon } from '@/components/Icons';
 import SimpleSelect from '@/components/SimpleSelect';
-
-const PATHS = {
-  dashboard: 'Dashboard',
-  accounts: 'Accounts',
-  investments: 'Investments',
-};
-
-const CURRENCY_OPTIONS = [
-  { value: 'GBP', label: 'GBP', icon: '/countries/country-GB.svg' },
-  { value: 'USD', label: 'USD', icon: '/countries/country-US.svg' },
-  { value: 'EUR', label: 'EUR', icon: '/countries/country-EU.svg' },
-];
+import { CURRENCY_OPTIONS, PATHS } from '@/utils/constants';
 
 export default function Navbar() {
   const pathname = usePathname();

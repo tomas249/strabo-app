@@ -2,17 +2,17 @@ import { useMemo, useRef, useState } from 'react';
 import { useOutside } from '@/hooks/useOutside';
 import { toByField } from '@/utils/common';
 
-export type OptionRenderBase<T> = {
-  optionsById: Record<string, T>;
-  id: string;
-  isSelected: boolean;
-};
-
 export type ControlRenderBase<T> = {
   optionsById: Record<string, T>;
   id: string;
   filterValue: string;
   onChangeFilterValue: (value: string) => void;
+};
+
+export type OptionRenderBase<T> = {
+  optionsById: Record<string, T>;
+  id: string;
+  isSelected: boolean;
 };
 
 export type OptionBase = { value: string };
