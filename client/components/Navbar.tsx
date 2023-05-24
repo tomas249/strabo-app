@@ -1,11 +1,12 @@
 'use client';
 
-import { use, useMemo, useRef, useState } from 'react';
+import { use, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { DropdownIcon, SyncingIcon, TickIcon } from '@/components/Icons';
 import Image from 'next/image';
 import React from 'react';
 import { useOutside } from '@/hooks/useOutside';
+import { toByField } from '@/utils/common';
 
 const PATHS = {
   dashboard: 'Dashboard',
@@ -19,11 +20,6 @@ const CURRENCY_OPTIONS = [
   { value: 'EUR', label: 'EUR', icon: '/countries/country-EU.svg' },
 ];
 
-const CURRENCY_OPTIONS_OBJ = CURRENCY_OPTIONS.reduce((acc, current) => {
-  acc[current.value] = current;
-  return acc;
-}, {} as Record<string, SelectOption & { icon: string }>);
-
 export default function Navbar() {
   const pathname = usePathname();
   const title = getFirstPath(pathname, PATHS);
@@ -33,10 +29,11 @@ export default function Navbar() {
       <h1 className="text-2xl font-semibold">{title}</h1>
       <div className="flex space-x-2">
         <Select
-          optionsId={CURRENCY_OPTIONS.map((v) => v.value)}
-          defaultId={CURRENCY_OPTIONS.map((v) => v.value)[0]}
-          onChange={(value) => {
-            console.log({ value });
+          options={CURRENCY_OPTIONS}
+          defaultValue={CURRENCY_OPTIONS[0].value}
+          filter={filterByLabel}
+          onSelect={(option) => {
+            console.log(option);
           }}
         />
         <button className="rounded-lg bg-white p-2.5 hover:bg-neutral-100">
@@ -57,8 +54,21 @@ function getFirstPath(path: string, paths: Record<string, string>) {
 
 // ----------------------------------------------
 
-const RendererOption = ({ isSelected, id }: any) => {
-  const option = CURRENCY_OPTIONS_OBJ[id];
+function ControlRender({ optionsById, id, filterValue, onChangeFilterValue }: any) {
+  const option = optionsById[id];
+
+  return (
+    <input
+      type="text"
+      placeholder="Currency"
+      value={filterValue}
+      onChange={(e) => onChangeFilterValue(e.target.value)}
+    />
+  );
+}
+
+const OptionRender = ({ optionsById, id, isSelected }: any) => {
+  const option = optionsById[id];
 
   return (
     <div className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100">
@@ -75,71 +85,39 @@ const RendererOption = ({ isSelected, id }: any) => {
   );
 };
 
-const filterIds = (ids: string[], filterValue: string) => {
-  return ids.filter((id) => {
-    const option = CURRENCY_OPTIONS_OBJ[id];
-    return option.label.toLowerCase().includes(filterValue.toLowerCase());
-  });
-};
-
-type SelectButtonProps = {
-  icon: string;
-  label: string;
-};
-
-const SelectButton = ({ id, filter, setFilter }: any) => {
-  const option = CURRENCY_OPTIONS_OBJ[id];
-  return (
-    <input
-      type="text"
-      placeholder="Currency"
-      value={filter}
-      onChange={(e) => setFilter(e.target.value)}
-    />
+const filterByLabel = (optionsById: Record<string, any>, ids: string[], filterValue: string) => {
+  return ids.filter((id) =>
+    optionsById[id].label.toLowerCase().includes(filterValue.toLowerCase()),
   );
-  return (
-    <div className="flex cursor-pointer items-center rounded-lg bg-white px-2.5 py-[8.5px] hover:bg-neutral-100">
-      <Image src={option.icon} height="24" width="24" alt="Country" />
-      <span className="mx-2.5 font-semibold leading-tight">{option.label}</span>
-      <DropdownIcon />
-    </div>
-  );
-};
-
-type SelectOption = {
-  value: string;
-  label: string;
-};
-
-type Filter = {
-  filter: string;
-  setFilter: (value: string) => void;
 };
 
 type SelectProps = {
-  optionsId: string[];
-  defaultId: string;
-  onChange: (id: string) => void;
+  options: any[];
+  defaultValue: string;
+  onSelect: (option: any) => void;
+  filter: (optionsById: Record<string, any>, ids: string[], filterValue: string) => string[];
 };
 
-export function Select({ optionsId, defaultId, onChange }: SelectProps) {
+export function Select<T>({ options, defaultValue, onSelect, filter }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [id, setId] = useState(defaultId);
-  const [filter, setFilter] = useState('');
+  const [id, setId] = useState(defaultValue);
+  const [filterValue, setFilterValue] = useState('');
 
-  const filteredOptionsId = useMemo(() => filterIds(optionsId, filter), [optionsId, filter]);
+  const optionsById = useMemo(() => toByField(options, 'value'), [options]);
+  const optionIds = useMemo(() => options.map((v) => v.value), [options]);
+  const filteredIds = useMemo(
+    () => filter(optionsById, optionIds, filterValue),
+    [optionsById, optionIds, filter, filterValue],
+  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  useOutside(wrapperRef, () => {
-    console.log('outside');
-    setIsOpen(false);
-  });
+  useOutside(wrapperRef, () => setIsOpen(false));
 
   function selectOption(selectedId: string) {
-    setFilter('');
+    setFilterValue('');
     if (selectedId !== id) {
-      onChange(selectedId);
       setId(selectedId);
+      onSelect(optionsById[selectedId]);
     }
   }
 
@@ -150,20 +128,23 @@ export function Select({ optionsId, defaultId, onChange }: SelectProps) {
   return (
     <div ref={wrapperRef} className="relative">
       <div onClick={() => setIsOpen((prev) => !prev)}>
-        <SelectButton id={id} filter={filter} setFilter={setFilter} />
+        <ControlRender
+          optionsById={optionsById}
+          id={id}
+          filterValue={filterValue}
+          onChangeFilterValue={setFilterValue}
+        />
       </div>
       <div
-        style={{
-          display: isOpen ? 'block' : 'none',
-        }}
+        style={{ display: isOpen ? 'block' : 'none' }}
         className="absolute right-0 top-[calc(100%+4px)] z-10 w-36 overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
       >
-        {filteredOptionsId.length === 0 ? (
+        {filteredIds.length === 0 ? (
           <div className="flex items-center justify-center text-sm text-neutral-400">
             No results found
           </div>
         ) : (
-          filteredOptionsId.map((optionId) => (
+          filteredIds.map((optionId) => (
             <div
               key={optionId}
               onClick={(event) => {
@@ -172,7 +153,11 @@ export function Select({ optionsId, defaultId, onChange }: SelectProps) {
                 setIsOpen(false);
               }}
             >
-              <RendererOption isSelected={isOptionSelected(optionId)} id={optionId} />
+              <OptionRender
+                optionsById={optionsById}
+                id={optionId}
+                isSelected={isOptionSelected(optionId)}
+              />
             </div>
           ))
         )}
