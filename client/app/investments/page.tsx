@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import SearchSelect from '@/components/SearchSelect';
 import { CURRENCY_OPTIONS } from '@/utils/constants';
 
 export default function Investments() {
   const longArray = Array.from({ length: 1000 }, (_, i) => i);
+  const [isListDisabled, setIsListDisabled] = useState(false);
 
   return (
     <div className="pt-3">
@@ -15,27 +17,10 @@ export default function Investments() {
         onSelect={(option) => {
           console.log(option);
         }}
+        onToggleOptions={(isOpen) => {
+          setIsListDisabled(isOpen);
+        }}
       />
     </div>
-    // <>
-    //   {longArray.map((i) => (
-    //     <div key={i} className="flex items-center justify-between py-2.5">
-    //       <div className="flex items-center gap-2">
-    //         <div className="h-8 w-8 rounded-full bg-neutral-100" />
-    //         <div className="flex flex-col">
-    //           <div className="h-4 w-24 rounded bg-neutral-100" />
-    //           <div className="mt-1 h-3 w-16 rounded bg-neutral-100" />
-    //         </div>
-    //       </div>
-    //       <div className="flex items-center gap-2">
-    //         <div className="h-8 w-8 rounded-full bg-neutral-100" />
-    //         <div className="flex flex-col">
-    //           <div className="h-4 w-24 rounded bg-neutral-100" />
-    //           <div className="mt-1 h-3 w-16 rounded bg-neutral-100" />
-    //         </div>
-    //       </div>
-    //     </div>
-    //   ))}
-    // </>
   );
 }

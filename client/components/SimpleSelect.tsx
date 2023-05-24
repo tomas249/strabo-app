@@ -15,11 +15,18 @@ type CurrencyOptions = OptionBase & {
   icon: string;
 };
 
-function SearchSelectControlRender({ optionsById, id }: ControlRenderBase<CurrencyOptions>) {
+function SimpleSelectControlRender({
+  optionsById,
+  id,
+  onToggleOptions,
+}: ControlRenderBase<CurrencyOptions>) {
   const option = optionsById[id];
 
   return (
-    <div className="flex cursor-pointer items-center rounded-lg bg-white px-2.5 py-[8.5px] hover:bg-neutral-100">
+    <div
+      onClick={() => onToggleOptions((prev) => !prev)}
+      className="flex cursor-pointer items-center rounded-lg bg-white px-2.5 py-[8.5px] hover:bg-neutral-100"
+    >
       <Image src={option.icon} height="24" width="24" alt="Country" />
       <span className="mx-2.5 font-semibold leading-tight">{option.label}</span>
       <DropdownIcon />
@@ -27,7 +34,7 @@ function SearchSelectControlRender({ optionsById, id }: ControlRenderBase<Curren
   );
 }
 
-function SearchSelectOptionRender({
+function SimpleSelectOptionRender({
   optionsById,
   id,
   isSelected,
@@ -35,7 +42,7 @@ function SearchSelectOptionRender({
   const option = optionsById[id];
 
   return (
-    <div className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100">
+    <div className="flex w-36 cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100">
       <div className="flex items-center space-x-2 pl-1">
         <Image src={option.icon} height="18" width="18" alt="Country" />
         <span className="text-sm font-medium">{option.label}</span>
@@ -57,8 +64,8 @@ type SimpleSelectProps = Omit<
 export default function SimpleSelect(props: SimpleSelectProps) {
   return (
     <Select
-      ControlRender={SearchSelectControlRender}
-      OptionRender={SearchSelectOptionRender}
+      ControlRender={SimpleSelectControlRender}
+      OptionRender={SimpleSelectOptionRender}
       filter={filterByLabel}
       {...props}
     />

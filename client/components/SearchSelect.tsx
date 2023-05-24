@@ -8,7 +8,8 @@ import type {
   SelectProps,
 } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
-import { TickIcon } from '@/components/Icons';
+import { SearchIcon, TickIcon } from '@/components/Icons';
+import { useState } from 'react';
 
 type CurrencyOptions = OptionBase & {
   label: string;
@@ -20,16 +21,41 @@ function SearchSelectControlRender({
   id,
   filterValue,
   onChangeFilterValue,
+  onToggleOptions,
 }: ControlRenderBase<CurrencyOptions>) {
+  const [wasFocused, setWasFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
   const option = optionsById[id];
 
+  const baseClass = 'group flex space-x-2.5 border-b-2 py-3';
+  const containerClass = `${baseClass} ${isFocused ? 'border-primary-500' : 'border-neutral-200'}`;
+
+  function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    onChangeFilterValue(value);
+
+    onToggleOptions(value !== '');
+  }
+
   return (
-    <input
-      type="text"
-      placeholder="Currency"
-      value={filterValue}
-      onChange={(e) => onChangeFilterValue(e.target.value)}
-    />
+    <div className={containerClass}>
+      <div className={isFocused ? 'text-primary-500' : 'text-neutral-400'}>
+        <SearchIcon />
+      </div>
+      <input
+        className="w-full bg-transparent text-base font-normal leading-tight placeholder-neutral-400 outline-none focus:text-neutral-900"
+        type="text"
+        placeholder="Search by Stocks, Shares, ETFs, or ticket symbol"
+        value={filterValue}
+        onChange={onChange}
+        onFocus={() => {
+          setIsFocused(true);
+          onToggleOptions(filterValue !== '');
+        }}
+        onBlur={() => setIsFocused(false)}
+      />
+    </div>
   );
 }
 
@@ -60,7 +86,7 @@ type SimpleSelectProps = Omit<
   'filter' | 'ControlRender' | 'OptionRender'
 >;
 
-export default function SimpleSelect(props: SimpleSelectProps) {
+export default function SearchSelect(props: SimpleSelectProps) {
   return (
     <Select
       ControlRender={SearchSelectControlRender}

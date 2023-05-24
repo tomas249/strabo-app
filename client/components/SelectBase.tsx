@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutside } from '@/hooks/useOutside';
 import { toByField } from '@/utils/common';
 
@@ -7,6 +7,7 @@ export type ControlRenderBase<T> = {
   id: string;
   filterValue: string;
   onChangeFilterValue: (value: string) => void;
+  onToggleOptions: Dispatch<SetStateAction<boolean>>;
 };
 
 export type OptionRenderBase<T> = {
@@ -22,6 +23,7 @@ export type SelectProps<T extends OptionBase> = {
   defaultValue: string;
   onSelect: (option: T) => void;
   filter?: (optionsById: Record<string, T>, ids: string[], filterValue: string) => string[];
+  onToggleOptions?: (status: boolean) => void;
   ControlRender: React.FC<ControlRenderBase<T>>;
   OptionRender: React.FC<OptionRenderBase<T>>;
 };
@@ -31,6 +33,7 @@ export function Select<T extends OptionBase>({
   defaultValue,
   onSelect,
   filter,
+  onToggleOptions,
   ControlRender,
   OptionRender,
 }: SelectProps<T>) {
@@ -48,6 +51,10 @@ export function Select<T extends OptionBase>({
   const wrapperRef = useRef<HTMLDivElement>(null);
   useOutside(wrapperRef, () => setIsOpen(false));
 
+  useEffect(() => {
+    onToggleOptions?.(isOpen);
+  }, [onToggleOptions, isOpen]);
+
   function selectOption(selectedId: string) {
     setFilterValue('');
     if (selectedId !== id) {
@@ -62,17 +69,16 @@ export function Select<T extends OptionBase>({
 
   return (
     <div ref={wrapperRef} className="relative">
-      <div onClick={() => setIsOpen((prev) => !prev)}>
-        <ControlRender
-          optionsById={optionsById}
-          id={id}
-          filterValue={filterValue}
-          onChangeFilterValue={setFilterValue}
-        />
-      </div>
+      <ControlRender
+        optionsById={optionsById}
+        id={id}
+        filterValue={filterValue}
+        onChangeFilterValue={setFilterValue}
+        onToggleOptions={setIsOpen}
+      />
       <div
         style={{ display: isOpen ? 'block' : 'none' }}
-        className="absolute right-0 top-[calc(100%+4px)] z-10 w-36 overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
+        className="absolute right-0 top-[calc(100%+4px)] z-10 min-w-full overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
       >
         {filteredIds.length === 0 ? (
           <div className="flex items-center justify-center text-sm text-neutral-400">
