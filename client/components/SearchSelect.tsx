@@ -59,9 +59,12 @@ function SearchSelectOptionRender({ optionsById, id }: OptionRenderBase<StockOpt
 
   return (
     <div className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100">
-      <div className="flex items-center space-x-2 pl-1">
+      <div className="flex items-center space-x-2 pl-1 hover:bg-[#EBEBF3]">
         <Image src="/social/apple.png" height="22" width="22" alt="Apple" />
-        <span className="text-sm font-medium">{option.accountName}</span>
+        <span className="pr-5 text-sm font-medium">{option.accountName}</span>
+        <span className="rounded-md bg-white px-1.5 py-0.5 text-xs font-medium text-neutral-400">
+          {option.tickerSymbol}
+        </span>
       </div>
     </div>
   );
