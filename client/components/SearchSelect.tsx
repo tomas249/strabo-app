@@ -10,11 +10,9 @@ import type {
 } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
 import { SearchIcon, TickIcon } from '@/components/Icons';
+import { Currency } from '@/utils/definitions';
 
-type CurrencyOptions = OptionBase & {
-  label: string;
-  icon: string;
-};
+type CurrencyOptions = Currency & { value: Currency['code'] };
 
 function SearchSelectControlRender({
   optionsById,

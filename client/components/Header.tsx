@@ -3,12 +3,13 @@
 import { usePathname } from 'next/navigation';
 import { SyncingIcon } from '@/components/Icons';
 import SimpleSelect from '@/components/SimpleSelect';
-import { CURRENCY_OPTIONS, PATHS } from '@/utils/constants';
+import { PATHS } from '@/utils/constants';
 import { useCurrency } from '@/hooks/useCurrency';
+import { Currency } from '@/utils/definitions';
 
 export default function Header() {
   const pathname = usePathname();
-  const { currency, setCurrency } = useCurrency();
+  const { allCurrencies, currency, setCurrency } = useCurrency();
 
   const title = getFirstPath(pathname, PATHS);
 
@@ -17,10 +18,10 @@ export default function Header() {
       <h1 className="text-2xl font-semibold">{title}</h1>
       <div className="flex space-x-2">
         <SimpleSelect
-          options={CURRENCY_OPTIONS}
-          defaultValue={CURRENCY_OPTIONS[0].value}
+          options={allCurrencies.map((c) => ({ ...c, value: c.code }))}
+          defaultValue={currency.code}
           onSelect={(option) => {
-            console.log(option);
+            setCurrency({ ...option, code: option.value });
           }}
         />
         <button className="rounded-lg bg-white p-2.5 hover:bg-neutral-100">

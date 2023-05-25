@@ -23,7 +23,7 @@ export default function Investments() {
     <>
       <div className="bg-neutral-50 px-8 pt-3">
         <span className="pb-1 text-sm font-semibold">Find stock:</span>
-        <SearchSelect
+        {/* <SearchSelect
           options={CURRENCY_OPTIONS}
           defaultValue={CURRENCY_OPTIONS[0].value}
           onSelect={(option) => {
@@ -35,7 +35,7 @@ export default function Investments() {
           onToggleOptions={(isOpen) => {
             setIsListDisabled(isOpen);
           }}
-        />
+        /> */}
       </div>
       <div className="flex min-h-[52px] w-full items-center px-12">
         <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
