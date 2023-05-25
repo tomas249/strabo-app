@@ -32,22 +32,27 @@ export default function Investments() {
         />
       </div>
       <div className="flex min-h-[52px] w-full items-center px-12">
-        {[
-          'Account Name',
-          'Ticker symbol',
-          'Exchange',
-          'Type',
-          'Country',
-          'Value',
-          'Industry or Sector',
-        ].map((header) => (
-          <div
-            key={header}
-            className="inline-block flex-[6] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0"
-          >
-            {header}
-          </div>
-        ))}
+        <div className="inline-block flex-[6] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Account Name
+        </div>
+        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Ticker symbol
+        </div>
+        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Exchange
+        </div>
+        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Type
+        </div>
+        <div className="inline-block flex-[2] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Country
+        </div>
+        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Value
+        </div>
+        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+          Industry or Sector
+        </div>
       </div>
       <div className="overflow-x-auto">
         <div className="mb-4 min-w-min px-8">
