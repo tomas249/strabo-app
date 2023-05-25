@@ -29,6 +29,9 @@ export default function Investments() {
           onSelect={(option) => {
             console.log(option);
           }}
+          onChangeFilterValue={(value) => {
+            console.log(value);
+          }}
           onToggleOptions={(isOpen) => {
             setIsListDisabled(isOpen);
           }}

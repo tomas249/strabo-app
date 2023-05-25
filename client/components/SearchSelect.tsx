@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import type {
   ControlRenderBase,
   OptionBase,
@@ -9,7 +10,6 @@ import type {
 } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
 import { SearchIcon, TickIcon } from '@/components/Icons';
-import { useState } from 'react';
 
 type CurrencyOptions = OptionBase & {
   label: string;
@@ -23,10 +23,7 @@ function SearchSelectControlRender({
   onChangeFilterValue,
   onToggleOptions,
 }: ControlRenderBase<CurrencyOptions>) {
-  const [wasFocused, setWasFocused] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
-  const option = optionsById[id];
 
   const baseClass = 'group flex space-x-2.5 border-b-2 py-3';
   const containerClass = `${baseClass} ${isFocused ? 'border-primary-500' : 'border-neutral-200'}`;

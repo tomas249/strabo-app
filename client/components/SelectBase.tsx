@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutside } from '@/hooks/useOutside';
 import { toByField } from '@/utils/common';
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 
 export type ControlRenderBase<T> = {
   optionsById: Record<string, T>;
@@ -24,6 +25,7 @@ export type SelectProps<T extends OptionBase> = {
   onSelect: (option: T) => void;
   filter?: (optionsById: Record<string, T>, ids: string[], filterValue: string) => string[];
   onToggleOptions?: (status: boolean) => void;
+  onChangeFilterValue?: (value: string) => void;
   ControlRender: React.FC<ControlRenderBase<T>>;
   OptionRender: React.FC<OptionRenderBase<T>>;
 };
@@ -34,12 +36,16 @@ export function Select<T extends OptionBase>({
   onSelect,
   filter,
   onToggleOptions,
+  onChangeFilterValue,
   ControlRender,
   OptionRender,
 }: SelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [id, setId] = useState(defaultValue);
   const [filterValue, setFilterValue] = useState('');
+  const debouncedSearch = useDebouncedCallback((searchTerm) => {
+    onChangeFilterValue?.(searchTerm);
+  }, 500);
 
   const optionsById = useMemo(() => toByField(options, 'value'), [options]);
   const optionIds = useMemo(() => options.map((v) => v.value), [options]);
@@ -73,7 +79,10 @@ export function Select<T extends OptionBase>({
         optionsById={optionsById}
         id={id}
         filterValue={filterValue}
-        onChangeFilterValue={setFilterValue}
+        onChangeFilterValue={(value) => {
+          setFilterValue(value);
+          debouncedSearch(value);
+        }}
         onToggleOptions={setIsOpen}
       />
       <div
