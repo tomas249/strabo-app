@@ -29,7 +29,6 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     getCurrencies().then((data) => {
       const currenciesWithRates = allCurrencies.map((currency) => {
         const rate = data.rates[currency.code as keyof typeof data.rates];
-        console.log({ rate });
         return { ...currency, rate };
       });
       setAllCurrencies(currenciesWithRates);

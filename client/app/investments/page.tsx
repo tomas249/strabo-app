@@ -1,25 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import Image from 'next/image';
 import SearchSelect from '@/components/SearchSelect';
 import { getStockPrice, searchStocks } from '@/api/stocks';
 import { StockDetails, StockResult } from '@/utils/definitions';
-import { BankIcon } from '@/components/Icons';
+import { BankIcon, DotsHorizontalIcon } from '@/components/Icons';
 import { convertCurrency, parseCountryName } from '@/utils/common';
-import { all } from 'axios';
 import { useCurrency } from '@/hooks/useCurrency';
-
-type InvestmentDetails = {
-  accountName: string;
-  tickerSymbol: string;
-  exchange: string;
-  type: string;
-  country?: string;
-  value?: number;
-  currency?: string;
-  industry?: string;
-};
 
 export default function Investments() {
   const [isListDisabled, setIsListDisabled] = useState(false);
@@ -34,6 +22,9 @@ export default function Investments() {
           options={stockOptions.map((s) => ({ ...s, value: s.tickerSymbol }))}
           defaultValue={''}
           onSelect={(option) => {
+            if (stockDetails.find((s) => s.accountName === option.accountName)) {
+              return;
+            }
             setStockDetails((prev) => [...prev, option]);
           }}
           onChangeFilterValue={(value) => searchStocks(value).then((data) => setStockOptions(data))}
@@ -62,9 +53,6 @@ export default function Investments() {
         <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
           Industry or Sector
         </div>
-        <div className="inline-block flex-[2] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
-          ...
-        </div>
       </div>
       <div className="overflow-x-auto">
         <div className="mb-4 min-w-min px-8">
@@ -80,7 +68,7 @@ export default function Investments() {
             ) : (
               stockDetails.map((stock, index) => (
                 <div
-                  key={index}
+                  key={stock.accountName}
                   className="flex h-10 flex-1 items-center border-b-[1px] border-neutral-100 last:border-0"
                 >
                   <div className="flex h-full min-w-fit flex-[6] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
@@ -119,15 +107,20 @@ export default function Investments() {
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
                     <StockValue tickerSymbol={stock.tickerSymbol} />
                   </div>
-                  <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                  <div className="relative flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
                     <span className="inline-block whitespace-nowrap rounded-md bg-[#E2F8F8] px-2.5 py-1 text-sm font-normal text-secondary-600">
                       Industry
                     </span>
-                  </div>
-                  <div className="flex h-full flex-[2] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
-                    <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      xxx
-                    </span>
+                    <button
+                      onClick={() =>
+                        setStockDetails((prev) =>
+                          prev.filter((s) => s.tickerSymbol !== stock.tickerSymbol),
+                        )
+                      }
+                      className="absolute right-0 rounded-lg p-2 hover:bg-neutral-200/60"
+                    >
+                      <DotsHorizontalIcon />
+                    </button>
                   </div>
                 </div>
               ))
@@ -139,7 +132,7 @@ export default function Investments() {
   );
 }
 
-export function StockValue({ tickerSymbol }: Pick<StockDetails, 'tickerSymbol'>) {
+const StockValue = memo(function StockValue({ tickerSymbol }: Pick<StockDetails, 'tickerSymbol'>) {
   const [valueUSD, setValueUSD] = useState(0);
   const [value, setValue] = useState<string | null>(null);
   const { allCurrenciesById, currency } = useCurrency();
@@ -165,4 +158,4 @@ export function StockValue({ tickerSymbol }: Pick<StockDetails, 'tickerSymbol'>)
       {value ? `${currency.symbol}${value}` : 'Loading...'}
     </span>
   );
-}
+});

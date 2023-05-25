@@ -9,9 +9,17 @@ export async function GET(request: Request) {
   const symbol = searchParams.get('symbol');
   const res = await fetch(`${BASE_URL}&symbol=${symbol}&apikey=${API_KEY}`);
   const dataJSON = await res.json();
-  const data = {
-    tickerSymbol: dataJSON['Global Quote']['01. symbol'],
-    price: parseFloat( dataJSON['Global Quote']['05. price']),
+  let data = {
+    tickerSymbol: '',
+    price: 0
+  };
+  try {
+    data = {
+      tickerSymbol: dataJSON['Global Quote']['01. symbol'],
+      price: parseFloat( dataJSON['Global Quote']['05. price']),
+    }
+  } catch (error) {
+    console.log(error);
   }
  
   return NextResponse.json({ data });
