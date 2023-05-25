@@ -5,7 +5,6 @@ import { SyncingIcon } from '@/components/Icons';
 import SimpleSelect from '@/components/SimpleSelect';
 import { PATHS } from '@/utils/constants';
 import { useCurrency } from '@/hooks/useCurrency';
-import { Currency } from '@/utils/definitions';
 
 export default function Header() {
   const pathname = usePathname();

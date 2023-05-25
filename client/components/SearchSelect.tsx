@@ -2,21 +2,14 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import type {
-  ControlRenderBase,
-  OptionBase,
-  OptionRenderBase,
-  SelectProps,
-} from '@/components/SelectBase';
+import type { ControlRenderBase, OptionRenderBase, SelectProps } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
-import { SearchIcon, TickIcon } from '@/components/Icons';
+import { SearchIcon } from '@/components/Icons';
 import { StockResult } from '@/utils/definitions';
 
 type StockOptions = StockResult & { value: StockResult['tickerSymbol'] };
 
 function SearchSelectControlRender({
-  optionsById,
-  id,
   filterValue,
   onChangeFilterValue,
   onToggleOptions,

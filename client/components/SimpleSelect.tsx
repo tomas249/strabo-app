@@ -1,12 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import type {
-  ControlRenderBase,
-  OptionBase,
-  OptionRenderBase,
-  SelectProps,
-} from '@/components/SelectBase';
+import type { ControlRenderBase, OptionRenderBase, SelectProps } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
 import { DropdownIcon, TickIcon } from '@/components/Icons';
 import { Currency } from '@/utils/definitions';

@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 
-// Debounce function
 const debounce = (func: (...args: any[]) => void, waitFor: number) => {
     const timeoutId = useRef<NodeJS.Timeout | null>(null);
   
@@ -15,7 +14,6 @@ const debounce = (func: (...args: any[]) => void, waitFor: number) => {
     };
 };
 
-// Hook
 export function useDebouncedCallback<T extends (...args: any[]) => void>(
     callback: T,
     delay: number,
