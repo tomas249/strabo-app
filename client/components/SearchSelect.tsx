@@ -10,9 +10,9 @@ import type {
 } from '@/components/SelectBase';
 import { Select } from '@/components/SelectBase';
 import { SearchIcon, TickIcon } from '@/components/Icons';
-import { Currency } from '@/utils/definitions';
+import { StockResult } from '@/utils/definitions';
 
-type CurrencyOptions = Currency & { value: Currency['code'] };
+type StockOptions = StockResult & { value: StockResult['tickerSymbol'] };
 
 function SearchSelectControlRender({
   optionsById,
@@ -20,7 +20,7 @@ function SearchSelectControlRender({
   filterValue,
   onChangeFilterValue,
   onToggleOptions,
-}: ControlRenderBase<CurrencyOptions>) {
+}: ControlRenderBase<StockOptions>) {
   const [isFocused, setIsFocused] = useState(false);
 
   const baseClass = 'group flex space-x-2.5 border-b-2 py-3';
@@ -54,30 +54,21 @@ function SearchSelectControlRender({
   );
 }
 
-function SearchSelectOptionRender({
-  optionsById,
-  id,
-  isSelected,
-}: OptionRenderBase<CurrencyOptions>) {
+function SearchSelectOptionRender({ optionsById, id }: OptionRenderBase<StockOptions>) {
   const option = optionsById[id];
 
   return (
     <div className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-100">
       <div className="flex items-center space-x-2 pl-1">
-        <Image src={option.icon} height="18" width="18" alt="Country" />
-        <span className="text-sm font-medium">{option.label}</span>
+        <Image src="/social/apple.png" height="22" width="22" alt="Apple" />
+        <span className="text-sm font-medium">{option.accountName}</span>
       </div>
-      {isSelected && (
-        <div className="text-primary-500">
-          <TickIcon />
-        </div>
-      )}
     </div>
   );
 }
 
 type SimpleSelectProps = Omit<
-  SelectProps<CurrencyOptions>,
+  SelectProps<StockOptions>,
   'filter' | 'ControlRender' | 'OptionRender'
 >;
 
@@ -92,8 +83,15 @@ export default function SearchSelect(props: SimpleSelectProps) {
   );
 }
 
-const filterByLabel = (optionsById: Record<string, any>, ids: string[], filterValue: string) => {
-  return ids.filter((id) =>
-    optionsById[id].label.toLowerCase().includes(filterValue.toLowerCase()),
+const filterByLabel = (
+  optionsById: Record<string, StockOptions>,
+  ids: string[],
+  filterValue: string,
+) => {
+  const filterValueLower = filterValue.toLowerCase();
+  return ids.filter(
+    (id) =>
+      optionsById[id].accountName.toLowerCase().includes(filterValueLower) ||
+      optionsById[id].tickerSymbol.toLowerCase().includes(filterValueLower),
   );
 };

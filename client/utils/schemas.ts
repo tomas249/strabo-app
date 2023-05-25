@@ -9,21 +9,17 @@ export const currencyResSchema = z.object({
   }),
 })
 
-export const stockSearchResSchema = z.object({
-  data: z.array(
-    z.object({
-      accountName: z.string(),
-      tickerSymbol: z.string(),
-      type: z.string(),
-      country: z.string(),
-      currency: z.string(),
-    })
-  ),
-})
+export const stockSearchResSchema = z.array(
+  z.object({
+    accountName: z.string(),
+    tickerSymbol: z.string(),
+    type: z.string(),
+    country: z.string(),
+    currency: z.string(),
+  })
+)
 
 export const stockPriceResSchema = z.object({
-  data: z.object({
-    tickerSymbol: z.string(),
-    price: z.string(),
-  }),
+  tickerSymbol: z.string(),
+  price: z.number(),
 })

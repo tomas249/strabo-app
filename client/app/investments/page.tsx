@@ -1,44 +1,47 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import SearchSelect from '@/components/SearchSelect';
-import { CURRENCY_OPTIONS } from '@/utils/constants';
+import { getStockPrice, searchStocks } from '@/api/stocks';
+import { StockDetails, StockResult } from '@/utils/definitions';
+import { BankIcon } from '@/components/Icons';
+import { convertCurrency, parseCountryName } from '@/utils/common';
+import { all } from 'axios';
+import { useCurrency } from '@/hooks/useCurrency';
 
 type InvestmentDetails = {
   accountName: string;
   tickerSymbol: string;
   exchange: string;
   type: string;
-  country: string;
-  value: number;
-  currency: string;
-  industry: string;
+  country?: string;
+  value?: number;
+  currency?: string;
+  industry?: string;
 };
 
 export default function Investments() {
   const [isListDisabled, setIsListDisabled] = useState(false);
+  const [stockOptions, setStockOptions] = useState<StockResult[]>([]);
+  const [stockDetails, setStockDetails] = useState<StockDetails[]>([]);
 
   return (
     <>
       <div className="bg-neutral-50 px-8 pt-3">
         <span className="pb-1 text-sm font-semibold">Find stock:</span>
-        {/* <SearchSelect
-          options={CURRENCY_OPTIONS}
-          defaultValue={CURRENCY_OPTIONS[0].value}
+        <SearchSelect
+          options={stockOptions.map((s) => ({ ...s, value: s.tickerSymbol }))}
+          defaultValue={''}
           onSelect={(option) => {
-            console.log(option);
+            setStockDetails((prev) => [...prev, option]);
           }}
-          onChangeFilterValue={(value) => {
-            console.log(value);
-          }}
-          onToggleOptions={(isOpen) => {
-            setIsListDisabled(isOpen);
-          }}
-        /> */}
+          onChangeFilterValue={(value) => searchStocks(value).then((data) => setStockOptions(data))}
+          onToggleOptions={(isOpen) => setIsListDisabled(isOpen)}
+        />
       </div>
       <div className="flex min-h-[52px] w-full items-center px-12">
-        <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
+        <div className="inline-block flex-[6] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
           Account Name
         </div>
         <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
@@ -70,27 +73,25 @@ export default function Investments() {
               style={{ display: isListDisabled ? 'block' : 'none' }}
               className="px-y absolute left-0 top-0 z-10 h-full w-full rounded-xl bg-neutral-200/30 "
             />
-            {Array(50)
-              .fill(0)
-              .map((_, index) => (
+            {stockDetails.length === 0 ? (
+              <div className="flex w-full justify-center text-sm font-light text-[#77779A]">
+                Start searching for stocks
+              </div>
+            ) : (
+              stockDetails.map((stock, index) => (
                 <div
                   key={index}
                   className="flex h-10 flex-1 items-center border-b-[1px] border-neutral-100 last:border-0"
                 >
                   <div className="flex h-full min-w-fit flex-[6] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
-                    <Image
-                      src={`/countries/country-EU.svg`}
-                      alt="Name of holding"
-                      height="22"
-                      width="22"
-                    />
+                    <Image src={`/social/apple.png`} alt="Name of holding" height="22" width="22" />
                     <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      Name of holding
+                      {stock.accountName}
                     </span>
                   </div>
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
                     <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      XXXX
+                      {stock.tickerSymbol}
                     </span>
                   </div>
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
@@ -98,23 +99,28 @@ export default function Investments() {
                       Exchange name
                     </span>
                   </div>
-                  <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                  <div className="flex h-full min-w-fit flex-[3] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                    <BankIcon />
                     <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      XX Mututal Fund
+                      {stock.type}
                     </span>
                   </div>
-                  <div className="flex h-full flex-[2] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                  <div className="flex h-full min-w-fit flex-[2] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                    <Image
+                      src={`/countries/country-US.svg`}
+                      alt="Name of holding"
+                      height="20"
+                      width="20"
+                    />
                     <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      XX UK
+                      {parseCountryName(stock.country)}
                     </span>
                   </div>
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
-                    <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
-                      Xxxx.xx
-                    </span>
+                    <StockValue tickerSymbol={stock.tickerSymbol} />
                   </div>
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
-                    <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
+                    <span className="inline-block whitespace-nowrap rounded-md bg-[#E2F8F8] px-2.5 py-1 text-sm font-normal text-secondary-600">
                       Industry
                     </span>
                   </div>
@@ -124,7 +130,8 @@ export default function Investments() {
                     </span>
                   </div>
                 </div>
-              ))}
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -132,13 +139,30 @@ export default function Investments() {
   );
 }
 
-const longArray: InvestmentDetails[] = Array.from({ length: 1000 }, (_, i) => ({
-  accountName: `Account ${i}`,
-  tickerSymbol: `Ticker ${i}`,
-  exchange: `Exchange ${i}`,
-  type: `Type ${i}`,
-  country: `Country ${i}`,
-  value: i,
-  currency: 'EUR',
-  industry: `Industry ${i}`,
-}));
+export function StockValue({ tickerSymbol }: Pick<StockDetails, 'tickerSymbol'>) {
+  const [valueUSD, setValueUSD] = useState(0);
+  const [value, setValue] = useState<string | null>(null);
+  const { allCurrenciesById, currency } = useCurrency();
+
+  useEffect(() => {
+    getStockPrice(tickerSymbol).then((res) => {
+      const rate = allCurrenciesById[currency.code].rate || 0;
+      const newValue = convertCurrency(res.price, rate);
+      setValue(newValue);
+      setValueUSD(res.price);
+    });
+  }, [tickerSymbol]);
+
+  useEffect(() => {
+    if (!valueUSD) return;
+    const rate = allCurrenciesById[currency.code].rate || 0;
+    const newValue = convertCurrency(valueUSD, rate);
+    setValue(newValue);
+  }, [allCurrenciesById, currency]);
+
+  return (
+    <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
+      {value ? `${currency.symbol}${value}` : 'Loading...'}
+    </span>
+  );
+}

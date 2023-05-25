@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const dataJSON = await res.json();
   const data = {
     tickerSymbol: dataJSON['Global Quote']['01. symbol'],
-    price: dataJSON['Global Quote']['05. price'],
+    price: parseFloat( dataJSON['Global Quote']['05. price']),
   }
  
   return NextResponse.json({ data });
