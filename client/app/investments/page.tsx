@@ -77,7 +77,7 @@ export default function Investments() {
                   key={index}
                   className="flex h-10 flex-1 items-center border-b-[1px] border-neutral-100 last:border-0"
                 >
-                  <div className="flex h-full flex-[3] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                  <div className="flex h-full min-w-fit flex-[6] items-center gap-2 border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
                     <Image
                       src={`/countries/country-EU.svg`}
                       alt="Name of holding"
@@ -88,6 +88,11 @@ export default function Investments() {
                       Name of holding
                     </span>
                   </div>
+                  {/* <div className="flex h-full flex-[6] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
+                    <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
+                      Name of Holding
+                    </span>
+                  </div> */}
                   <div className="flex h-full flex-[3] items-center border-r-[1px] border-neutral-100 px-2.5 first:pl-0 last:border-0">
                     <span className="inline-block whitespace-nowrap text-sm font-normal text-[#1A1C1E]">
                       XXXX
