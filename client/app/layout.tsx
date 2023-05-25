@@ -2,6 +2,7 @@ import './globals.css';
 import { Poppins } from 'next/font/google';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -19,11 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${poppins.className} flex h-screen w-screen bg-neutral-50`}>
-        <Sidebar />
-        <div className="flex flex-1 flex-col overflow-x-hidden">
-          <Header />
-          {children}
-        </div>
+        <CurrencyProvider>
+          <Sidebar />
+          <div className="flex flex-1 flex-col overflow-x-hidden">
+            <Header />
+            {children}
+          </div>
+        </CurrencyProvider>
       </body>
     </html>
   );
