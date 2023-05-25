@@ -5,7 +5,11 @@ const API_KEY = process.env.FASTFOREX_API_KEY;
 
 export async function GET() {
   const res = await fetch(`${BASE_URL}&api_key=${API_KEY}`);
-  const data = await res.json();
+  const dataJSON = await res.json();
+  const data = {
+    base: dataJSON.base,
+    rates: dataJSON.results,
+  }
  
   return NextResponse.json({ data });
 }
