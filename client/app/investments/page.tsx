@@ -37,7 +37,7 @@ export default function Investments() {
           }}
         />
       </div>
-      <div className="flex min-h-[44px] w-full items-center px-12">
+      <div className="flex min-h-[52px] w-full items-center px-12">
         <div className="inline-block flex-[3] whitespace-nowrap px-2.5 text-sm font-medium text-[#77779A] first:pl-0">
           Account Name
         </div>

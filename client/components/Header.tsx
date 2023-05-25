@@ -4,9 +4,12 @@ import { usePathname } from 'next/navigation';
 import { SyncingIcon } from '@/components/Icons';
 import SimpleSelect from '@/components/SimpleSelect';
 import { CURRENCY_OPTIONS, PATHS } from '@/utils/constants';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function Header() {
   const pathname = usePathname();
+  const { currency, setCurrency } = useCurrency();
+
   const title = getFirstPath(pathname, PATHS);
 
   return (
