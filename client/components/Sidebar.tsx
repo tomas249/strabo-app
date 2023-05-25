@@ -14,11 +14,7 @@ import {
   PlusIcon,
 } from '@/components/Icons';
 
-type SidebarProps = {
-  width: number;
-};
-
-export default function SideBar({ width }: SidebarProps) {
+export default function SideBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,10 +23,7 @@ export default function SideBar({ width }: SidebarProps) {
   }
 
   return (
-    <div
-      style={{ width }}
-      className="fixed left-0 top-0 flex h-full border-r-2 border-neutral-200 bg-neutral-50"
-    >
+    <div className="flex w-[274px] border-r-2 border-neutral-200 bg-neutral-50">
       <div className="flex w-full flex-col justify-between px-4 pb-7 pt-1">
         {/* TOP */}
         <div>

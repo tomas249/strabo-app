@@ -78,7 +78,7 @@ export function Select<T extends OptionBase>({
       />
       <div
         style={{ display: isOpen ? 'block' : 'none' }}
-        className="absolute right-0 top-[calc(100%+4px)] z-10 min-w-full overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
+        className="absolute right-0 top-[calc(100%+4px)] z-20 min-w-full overflow-y-auto rounded-lg bg-white p-1.5 shadow-md"
       >
         {filteredIds.length === 0 ? (
           <div className="flex items-center justify-center text-sm text-neutral-400">

@@ -5,12 +5,12 @@ import { SyncingIcon } from '@/components/Icons';
 import SimpleSelect from '@/components/SimpleSelect';
 import { CURRENCY_OPTIONS, PATHS } from '@/utils/constants';
 
-export default function Navbar() {
+export default function Header() {
   const pathname = usePathname();
   const title = getFirstPath(pathname, PATHS);
 
   return (
-    <div className="sticky top-0 z-10 flex h-20 items-center justify-between border-b-[1px] border-neutral-200 bg-neutral-50">
+    <div className="sticky top-0 z-10 mx-8 flex min-h-[80px] items-center justify-between border-b-[1px] border-neutral-200 bg-neutral-50">
       <h1 className="text-2xl font-semibold">{title}</h1>
       <div className="flex space-x-2">
         <SimpleSelect
