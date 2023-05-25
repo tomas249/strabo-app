@@ -31,10 +31,14 @@ export default function Header() {
   );
 }
 
-function getFirstPath(path: string, paths: Record<string, string>) {
+function getFirstPath(path: string, paths: Record<string, string> & {}) {
   const currentPaths = path.slice(1).split('/');
   const firstPath = currentPaths[0];
-  if (!paths[firstPath]) throw new Error(`Path ${firstPath} not found`);
+
+  if (!paths[firstPath]) {
+    console.error(`Path "${firstPath}" not found`);
+    return 'Not found';
+  }
 
   return paths[firstPath];
 }
